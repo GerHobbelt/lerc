@@ -1969,7 +1969,7 @@ bool Lerc2::ReadTile(const Byte** ppByte, size_t& nBytesRemainingInOut, T* data,
   Byte comprFlag = *ptr++;
   nBytesRemaining--;
 
-  const bool bDiffEnc = (hd.version >= 5) ? (comprFlag & 4) : false;  // bit 2 now encodes diff or delta encoding
+  const bool bDiffEnc = (hd.version >= 5) ? !!(comprFlag & 4) : false;  // bit 2 now encodes diff or delta encoding
   const int pattern = (hd.version >= 5) ? 14 : 15;
 
   if (((comprFlag >> 2) & pattern) != ((j0 >> 3) & pattern))    // use bits 2345 for integrity check

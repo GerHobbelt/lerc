@@ -974,11 +974,12 @@ bool Lerc::MasksDiffer(const Byte* p0, const Byte* p1, size_t n)
     return false;
 
   if (!p0)    // means all valid
-    return memchr(p1, 0, n);    // any invalid?
+	// `!!` operator fixes warning C4800: Implicit conversion from 'const void *' to bool. Possible information loss
+    return !!memchr(p1, 0, n);    // any invalid?
   else if (!p1)
-    return memchr(p0, 0, n);
+    return !!memchr(p0, 0, n);
   else
-    return memcmp(p0, p1, n);
+    return !!memcmp(p0, p1, n);
 }
 
 // -------------------------------------------------------------------------- ;
