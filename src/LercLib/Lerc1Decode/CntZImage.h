@@ -25,6 +25,7 @@ Contributors:  Thomas Maurer
 #define CNTZIMAGE_H
 
 #include <vector>
+#include <stdexcept>
 #include "TImage.hpp"
 
 NAMESPACE_LERC_START
@@ -39,8 +40,27 @@ class CntZImage : public TImage< CntZ >
 {
 public:
   CntZImage();
-  virtual ~CntZImage()  {};
+  virtual ~CntZImage() {};
   std::string getTypeString() const  { return "CntZImage "; }
+
+  /*
+  warning C4263: 'LercNS::CntZImage &LercNS::CntZImage::operator =(const LercNS::CntZImage &)': member function does not override any base class virtual member function
+  warning C4264: 'LercNS::TImage<LercNS::CntZ> &LercNS::TImage<LercNS::CntZ>::operator =(const LercNS::TImage<LercNS::CntZ> &)': no override available for virtual member function from base 'LercNS::TImage<LercNS::CntZ>'; function is hidden
+                 see declaration of 'LercNS::TImage<LercNS::CntZ>::operator ='
+                 see declaration of 'LercNS::TImage<LercNS::CntZ>'
+
+  warning C4263: 'LercNS::CntZImage &LercNS::CntZImage::operator =(const LercNS::CntZImage &)': member function does not override any base class virtual member function
+  warning C4264: 'LercNS::TImage<LercNS::CntZ> &LercNS::TImage<LercNS::CntZ>::operator =(const LercNS::TImage<LercNS::CntZ> &)': no override available for virtual member function from base 'LercNS::TImage<LercNS::CntZ>'; function is hidden
+                 see declaration of 'LercNS::TImage<LercNS::CntZ>::operator ='
+				 see declaration of 'LercNS::TImage<LercNS::CntZ>'
+  */
+  virtual TImage< CntZ >& operator=(const TImage< CntZ >& tImg) override {
+	  throw std::logic_error("CntZImage: copy assignment of virtual base class not permitted.");
+  }
+
+  //virtual CntZImage& operator=(const CntZImage& tImg) = delete;
+  //virtual CntZImage& operator=(const TImage<CntZ>& tImg) = delete;
+  //virtual TImage<CntZ>& operator=(const TImage<CntZ>& tImg) = delete;
 
   bool resizeFill0(int width, int height);
 
