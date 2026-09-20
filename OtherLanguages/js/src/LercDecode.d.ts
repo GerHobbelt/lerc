@@ -1,13 +1,13 @@
 export type PixelTypedArray =
-  | Int8Array
-  | Uint8Array
-  | Uint8ClampedArray
-  | Int16Array
-  | Uint16Array
-  | Int32Array
-  | Uint32Array
-  | Float32Array
-  | Float64Array;
+  | Int8Array<ArrayBuffer>
+  | Uint8Array<ArrayBuffer>
+  | Uint8ClampedArray<ArrayBuffer>
+  | Int16Array<ArrayBuffer>
+  | Uint16Array<ArrayBuffer>
+  | Int32Array<ArrayBuffer>
+  | Uint32Array<ArrayBuffer>
+  | Float32Array<ArrayBuffer>
+  | Float64Array<ArrayBuffer>;
 
 export type LercPixelType = "S8" | "U8" | "S16" | "U16" | "S32" | "U32" | "F32" | "F64";
 
@@ -49,13 +49,36 @@ export interface LercData {
   pixelType: LercPixelType;
   statistics: BandStats[];
   pixels: PixelTypedArray[];
-  mask: Uint8Array;
+  mask: Uint8Array<ArrayBuffer> | null;
+  dimCount: number;
   depthCount: number;
-  bandMasks?: Uint8Array[];
+  bandMasks: Uint8Array<ArrayBuffer>[] | null;
+  noDataValues: (number | null)[] | null;
 }
 
+/**
+ * Load the LERC wasm module.
+ *
+ * @param options Use the options to specify a function to locate the wasm file, if not located in the same directory as the script.
+ */
 export function load(options?: { locateFile?: (wasmFileName?: string, scriptDir?: string) => string }): Promise<void>;
+
 export function isLoaded(): boolean;
+
+/**
+ * Decode a LERC byte stream and return an object containing the pixel data.
+ *
+ * @param {object} [options] The decoding options below are optional.
+ * @param {number} [options.inputOffset] The number of bytes to skip in the input byte stream. A valid Lerc file is expected at that position.
+ * @param {number} [options.noDataValue] It is recommended to use the returned mask instead of setting this value.
+ * @param {boolean} [options.returnInterleaved] (ndepth LERC2 only) If true, returned depth values are pixel-interleaved, a.k.a [p1_dep1, p1_dep2, ..., p1_depN, p2_dep1...], default is [p1_dep1, p2_dep1, ..., p1_dep2, p2_dep2...]
+ *
+ */
 export function decode(input: ArrayBuffer | Uint8Array, options?: DecodeOptions): LercData;
+
 export function getBlobInfo(input: ArrayBuffer | Uint8Array, options?: { inputOffset?: number }): LercHeaderInfo;
+
+/**
+ * @deprecated Use getBlobInfo() instead.
+ */
 export function getBandCount(input: ArrayBuffer | Uint8Array, options?: { inputOffset?: number }): number;
